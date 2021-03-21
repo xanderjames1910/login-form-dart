@@ -43,13 +43,13 @@ Widget _loginForm(BuildContext context) {
           ),
           child: Column(
             children: <Widget>[
-              Text('Ingreso', style: TextStyle(fontSize: 20.0)),
+              Text('Inicio de Sesión', style: TextStyle(fontSize: 20.0)),
               SizedBox(height: 20.0),
               _crearEmail(bloc),
               SizedBox(height: 30.0),
               _crearPassword(bloc),
               SizedBox(height: 30.0),
-              _creatBoton(),
+              _creatBoton(bloc),
             ],
           ),
         ),
@@ -103,25 +103,40 @@ Widget _crearPassword(LoginBloc bloc) {
   );
 }
 
-Widget _creatBoton() {
-  return ElevatedButton(
-    child: Container(
-      padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-      child: Text('Ingresar'),
-    ),
-    style: ButtonStyle(
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+Widget _creatBoton(LoginBloc bloc) {
+  return StreamBuilder(
+    stream: bloc.formValidStream,
+    builder: (BuildContext context, AsyncSnapshot snapshot) {
+      return ElevatedButton(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+          child: Text('Ingresar'),
         ),
-      ),
-      elevation: MaterialStateProperty.all(0.0),
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.deepPurple),
-      textStyle: MaterialStateProperty.all(
-          TextStyle(fontSize: 18.0, color: Colors.white)),
-    ),
-    onPressed: null,
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+          elevation: MaterialStateProperty.all(0.0),
+          backgroundColor: MaterialStateProperty.all<Color>(
+              snapshot.hasData ? Colors.deepPurple : Colors.black12),
+          textStyle: MaterialStateProperty.all(
+              TextStyle(fontSize: 18.0, color: Colors.white)),
+        ),
+        onPressed: snapshot.hasData ? () => _login(bloc, context) : null,
+      );
+    },
   );
+}
+
+_login(LoginBloc bloc, BuildContext context) {
+  print('===============');
+  print('Email: ${bloc.email}');
+  print('Password: ${bloc.password}');
+  print('===============');
+
+  Navigator.pushReplacementNamed(context, 'home');
 }
 
 Widget _crearFondo(BuildContext context) {
@@ -164,7 +179,8 @@ Widget _crearFondo(BuildContext context) {
             Icon(Icons.person_pin_circle, color: Colors.white, size: 100.0),
             SizedBox(height: 10.0, width: double.infinity),
             Text(
-              'Jimmy Montes',
+              // 'Jimmy Montes',
+              'Majito Rivas',
               style: TextStyle(color: Colors.white, fontSize: 22.0),
             )
           ],
