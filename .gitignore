@@ -32,7 +32,7 @@
 /build/
 
 # Secrets
-/lib/src/secrets
+lib/src/secrets/
 
 # Web related
 lib/generated_plugin_registrant.dart
