@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Material App',
         initialRoute: prefs.token != '' ? prefs.ultimaPagina : 'login',
+        // initialRoute: 'home',
         // initialRoute: prefs.initialPage,
         routes: {
           'login': (BuildContext context) => LoginPage(),
