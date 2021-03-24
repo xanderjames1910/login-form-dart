@@ -2,16 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:form_validation/src/models/producto_model.dart';
+import 'package:form_validation/src/preferencias_usuario/preferencias_usuario.dart';
+import 'package:form_validation/src/secrets/secret_constants.dart' as secrets;
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime_type/mime_type.dart';
 
 class ProductosProvider {
-  final String _url =
-      'https://flutter-varios-bd9f5-default-rtdb.firebaseio.com';
+  final String _url = secrets.firebaseDBUrl;
+  final _prefs = new PreferenciasUsuario();
 
   Future<bool> crearProducto(ProductoModel producto) async {
-    final url = '$_url/productos.json';
+    final url = '$_url/productos.json?auth=${_prefs.token}';
 
     final resp =
         await http.post(Uri.parse(url), body: productoModelToJson(producto));
@@ -24,7 +26,7 @@ class ProductosProvider {
   }
 
   Future<bool> editarProducto(ProductoModel producto) async {
-    final url = '$_url/productos/${producto.id}.json';
+    final url = '$_url/productos/${producto.id}.json?auth=${_prefs.token}';
 
     final resp =
         await http.put(Uri.parse(url), body: productoModelToJson(producto));
@@ -37,7 +39,7 @@ class ProductosProvider {
   }
 
   Future<List<ProductoModel>> cargarProductos() async {
-    final url = '$_url/productos.json';
+    final url = '$_url/productos.json?auth=${_prefs.token}';
     final resp = await http.get(Uri.parse(url));
 
     final Map<String, dynamic> decodedData = json.decode(resp.body);
@@ -58,7 +60,7 @@ class ProductosProvider {
   }
 
   Future<int> borrarProducto(String id) async {
-    final url = '$_url/productos/$id.json';
+    final url = '$_url/productos/$id.json?auth=${_prefs.token}';
 
     final resp = await http.delete(Uri.parse(url));
 
@@ -68,8 +70,7 @@ class ProductosProvider {
   }
 
   Future<String> subirImage(File imagen) async {
-    final url = Uri.parse(
-        'https://api.cloudinary.com/v1_1/drp8xpo0w/image/upload?upload_preset=n60qveuh');
+    final url = Uri.parse(secrets.cloudinaryUrl);
 
     final mimeType = mime(imagen.path).split('/');
 

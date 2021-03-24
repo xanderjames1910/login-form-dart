@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:form_validation/src/models/producto_model.dart';
+import 'package:form_validation/src/pages/login_page.dart';
+import 'package:form_validation/src/preferencias_usuario/preferencias_usuario.dart';
 import 'package:form_validation/src/providers/productos_provider.dart';
 
 class HomePage extends StatefulWidget {
+  static final String routeName = 'home';
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  final _prefs = PreferenciasUsuario();
   final productoProvider = new ProductosProvider();
 
   @override
   Widget build(BuildContext context) {
+    _prefs.ultimaPagina = HomePage.routeName;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              _prefs.token = '';
+              _prefs.initialPage = LoginPage.routeName;
+              Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
+            },
+          )
+        ],
       ),
       body: _crearListado(),
       floatingActionButton: _crearBotton(context),
